@@ -5,81 +5,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vanguard Solutions | Propuesta de Gemelo Digital para HM Hospitales</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Vanguard Corporate (Dark Blue, Teal, Light Gray) -->
-    <!-- Application Structure Plan: A narrative-driven, single-page scrolling experience. The structure follows a persuasive consulting flow: Problem -> Solution -> Impact -> Implementation -> Vision. This is more engaging than a traditional report structure and guides the user through a logical story, making the complex information digestible. Key interactions include scroll-based animations and hover-to-reveal data on charts, encouraging exploration. A sticky navigation bar allows for both linear progression and direct access to specific sections, catering to different user behaviors. -->
+    <!-- Application Structure Plan: A narrative-driven, single-... to specific sections, catering to different user behaviors. -->
     <!-- Visualization & Content Choices: 
-        1. Staff Emigration Data -> Goal: Compare -> Viz: Bar Chart -> Interaction: Hover for details -> Justification: Best for comparing categorical data, interaction adds engagement -> Library: Chart.js.
-        2. Digital Twin Concept -> Goal: Organize/Explain -> Viz: HTML/CSS Diagram -> Interaction: Hover for info -> Justification: Simplifies a complex data flow without images/SVG -> Library: Vanilla JS + Tailwind.
-        3. Operational Efficiency -> Goal: Compare (Before/After) -> Viz: Grouped Bar Chart -> Interaction: Hover for exact values -> Justification: Ideal for direct comparison of performance metrics -> Library: Chart.js.
-        4. ROI -> Goal: Inform/Impress -> Viz: Animated Counter + Donut Chart -> Interaction: Scroll-triggered animation -> Justification: Adds a "wow" factor to a key metric -> Library: Chart.js + Vanilla JS.
-        5. Project Phases -> Goal: Show Change/Process -> Viz: HTML/CSS Timeline -> Interaction: Visual progression -> Justification: Intuitive for representing sequential steps -> Library: Tailwind.
+    - Chart 1: Horizontal bar chart indicating emigration causes (Use h-[300px] and rounded bars). Tailwind: 'bg-slate-50' section with 'rounded-xl'.
+    - Chart 2: Side-by-side grouped bar chart comparing time in typical system vs IoT (Use brand colors). 
+    - ROI Counter: Appears when scrolled into view; counts up to '92%'.
+    - Sticky Nav: Highlights current section. Smooth scroll behavior.
+    - Cards & Timeline: Visual tiles for deliverables.
+    
+    DATA SOURCE NOTES:
+    - Emigration data % approximated from article (75.3, 67.7, 55.2, 48.9, 33.1).
+    - Efficiency/TAT time from estimation (Typical: 20/15/10 vs IoT: 1/1/2).
     -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
-        body {
+        :root {
+            --vanguard-primary: #06b6d4; /* cyan-500 */
+            --vanguard-primary-dark: #0891b2; /* cyan-600 */
+            --vanguard-secondary: #64748b; /* slate-500 */
+            --vanguard-bg: #0b1220;
+            --vanguard-card: #0f172a; /* slate-900 */
+            --vanguard-muted: #94a3b8; /* slate-400 */
+        }
+        html, body {
             font-family: 'Inter', sans-serif;
             background-color: #f8fafc; /* slate-50 */
         }
         .vanguard-gradient-text {
             background: linear-gradient(to right, #06b6d4, #0891b2);
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
         }
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 300px;
-            max-height: 400px;
+        .nav-link.active {
+            color: #06b6d4 !important;
+            font-weight: 700;
         }
-        @media (min-width: 768px) {
-            .chart-container {
-                height: 400px;
-            }
-        }
-        .kpi-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .kpi-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-        }
-        .nav-link {
-            transition: color 0.3s ease;
-            position: relative;
-            padding-bottom: 4px;
-        }
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background-color: #06b6d4;
-            transition: width 0.3s ease;
-        }
-        .nav-link.active, .nav-link:hover {
-            color: #06b6d4;
-        }
-        .nav-link.active::after, .nav-link:hover::after {
-            width: 100%;
-        }
+        /* Optional: fixed height for charts if Tailwind class removed */
+        .chart-container { height: 300px; }
     </style>
 </head>
 <body class="text-slate-700">
-
-    <header id="header" class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
-        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+    <!-- NAVBAR -->
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-slate-200">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center text-white font-bold text-xl">
-                    VS
+                <div class="w-8 h-8 rounded-lg bg-cyan-500/20 grid place-items-center">
+                    <svg class="w-5 h-5 text-cyan-600" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l4 7-4 4-4-4 4-7zm0 20l-6-6 2-2 4 4 4-4 2 2-6 6z"/></svg>
                 </div>
                 <span class="text-xl font-bold text-slate-800">Vanguard Solutions</span>
             </div>
@@ -87,190 +63,143 @@
                 <a href="#challenge" class="nav-link font-medium text-slate-600">El Desafío</a>
                 <a href="#solution" class="nav-link font-medium text-slate-600">La Solución</a>
                 <a href="#impact" class="nav-link font-medium text-slate-600">Impacto</a>
-                <a href="#roadmap" class="nav-link font-medium text-slate-600">Hoja de Ruta</a>
+                <a href="#roadmap" class="nav-link font-medium text-slate-600">Roadmap</a>
+                <a href="#cta" class="nav-link font-medium text-slate-600">Contacto</a>
             </div>
-        </nav>
+        </div>
     </header>
 
     <main>
-        <section id="hero" class="bg-white">
-            <div class="container mx-auto px-6 py-20 md:py-32 text-center">
-                <h1 class="text-4xl md:text-6xl font-extrabold text-slate-800 leading-tight">
-                    Optimizando la Operativa Hospitalaria en <span class="vanguard-gradient-text">HM Hospitales</span>
-                </h1>
-                <p class="mt-6 text-lg md:text-xl max-w-3xl mx-auto text-slate-600">
-                    Una propuesta para transformar la gestión de recursos, mejorar la atención al paciente y garantizar la sostenibilidad futura a través de la implementación de un Gemelo Digital.
-                </p>
-            </div>
-        </section>
-
-        <section id="challenge" class="py-20 md:py-28">
-            <div class="container mx-auto px-6">
-                <div class="text-center max-w-3xl mx-auto">
-                    <h2 class="text-3xl md:text-4xl font-bold text-slate-800">El Desafío: Ineficiencias en el Sector Salud Español</h2>
+        <!-- HERO -->
+        <section class="bg-white">
+            <div class="max-w-6xl mx-auto px-4 py-16 grid md:grid-cols-2 gap-8">
+                <div>
+                    <p class="uppercase tracking-wider text-sm text-slate-500 mb-2">Propuesta</p>
+                    <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 leading-tight">
+                        Gemelo Digital para <span class="vanguard-gradient-text">HM Hospitales</span>
+                    </h1>
                     <p class="mt-4 text-lg text-slate-600">
-                        El sistema sanitario, aunque fundamental, se enfrenta a presiones crecientes que revelan ineficiencias estructurales. Largos tiempos de espera y una alta carga de trabajo para el personal no son solo estadísticas; son barreras para una atención de calidad y la sostenibilidad del sistema. Esta sección explora los datos que definen el problema que nos proponemos resolver.
+                        Reducción radical de tiempos muertos en camas, turn-around acelerado y analítica operativa en tiempo real con IoT + Power Platform.
                     </p>
+                    <div class="mt-6 flex gap-3">
+                        <a href="#solution" class="px-5 py-3 rounded-xl bg-cyan-600 text-white font-semibold shadow hover:bg-cyan-700">Ver solución</a>
+                        <a href="#impact" class="px-5 py-3 rounded-xl border border-slate-200 text-slate-700 font-semibold hover:bg-slate-50">Impacto</a>
+                    </div>
                 </div>
-
-                <div class="mt-16 grid md:grid-cols-2 gap-12 items-center">
-                    <div class="bg-white p-8 rounded-2xl shadow-lg">
-                        <h3 class="text-xl font-bold text-slate-800 mb-4">Fuga de Talento: ¿Por Qué Emigran los Sanitarios?</h3>
-                        <p class="text-slate-600 mb-6">La retención del personal cualificado es un pilar fundamental. Sin embargo, factores como la carga de trabajo y la precariedad laboral están impulsando una preocupante fuga de talento. El gráfico muestra las principales razones citadas por los profesionales para abandonar el sistema.</p>
-                        <div class="chart-container h-[300px] md:h-[350px]">
-                            <canvas id="emigrationChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="space-y-8">
-                        <div class="bg-white p-8 rounded-2xl shadow-lg kpi-card">
-                            <h4 class="text-lg font-semibold text-slate-800">Tiempos de Espera Críticos</h4>
-                            <p class="text-5xl font-extrabold text-cyan-600 mt-2">87 días</p>
-                            <p class="text-slate-500 mt-1">Es la media de espera para una consulta con un especialista.</p>
-                        </div>
-                        <div class="bg-white p-8 rounded-2xl shadow-lg kpi-card">
-                            <h4 class="text-lg font-semibold text-slate-800">Cirugías No Urgentes</h4>
-                            <p class="text-5xl font-extrabold text-cyan-600 mt-2">112 días</p>
-                            <p class="text-slate-500 mt-1">Es la media de espera para una intervención quirúrgica no urgente.</p>
-                        </div>
-                    </div>
+                <div class="bg-slate-900 text-white rounded-2xl p-6">
+                    <h3 class="text-xl font-bold mb-3">Arquitectura ligera</h3>
+                    <ul class="space-y-2 text-slate-300">
+                        <li>• Sensores de presión → ESP32 → MQTT/HTTPS</li>
+                        <li>• Ingesta en Dataverse + Power Automate (event-driven)</li>
+                        <li>• Power Apps para asignación de camas</li>
+                        <li>• Power BI para dashboards y SLA</li>
+                        <li>• Alertas/robots: Teams/Email/Telefonía</li>
+                    </ul>
                 </div>
             </div>
         </section>
 
-        <section id="solution" class="py-20 md:py-28 bg-white">
-            <div class="container mx-auto px-6">
-                <div class="text-center max-w-3xl mx-auto">
-                    <h2 class="text-3xl md:text-4xl font-bold text-slate-800">La Solución Vanguard: El Gemelo Digital</h2>
-                    <p class="mt-4 text-lg text-slate-600">
-                        Proponemos una solución probada en las industrias más exigentes, adaptada al entorno hospitalario. Un Gemelo Digital (Digital Twin) es una réplica virtual y dinámica del hospital que se alimenta de datos en tiempo real. Permite no solo ver lo que está pasando, sino también simular escenarios futuros para tomar decisiones más inteligentes, proactivas y eficientes.
-                    </p>
-                </div>
-
-                <div class="mt-16 bg-slate-800 text-white p-8 md:p-12 rounded-2xl shadow-2xl">
-                    <h3 class="text-2xl font-bold text-center mb-10">¿Cómo Funciona? Un Ecosistema Conectado</h3>
-                    <div class="grid md:grid-cols-3 gap-8 items-center text-center">
-                        <div class="space-y-4">
-                            <h4 class="font-bold text-cyan-400 text-lg">1. Mundo Físico</h4>
-                            <p class="text-slate-300">Sensores IoT en camas, equipos y otras infraestructuras clave recopilan datos operativos en tiempo real.</p>
-                            <div class="flex justify-center space-x-4 mt-4 text-4xl">
-                                <span title="Cama">🛏️</span>
-                                <span title="Personal">👩‍⚕️</span>
-                                <span title="Equipo Médico">🩺</span>
-                            </div>
-                        </div>
-                        
-                        <div class="flex justify-center text-5xl text-cyan-500">
-                           <span class="hidden md:block">➡️</span>
-                           <span class="md:hidden">⬇️</span>
-                        </div>
-
-                        <div class="space-y-4">
-                            <h4 class="font-bold text-cyan-400 text-lg">2. El Gemelo Digital</h4>
-                            <p class="text-slate-300">Los datos alimentan una réplica virtual que modela, simula y analiza el estado del hospital, identificando cuellos de botella y oportunidades de mejora.</p>
-                             <div class="flex justify-center space-x-4 mt-4 text-4xl">
-                                <span title="Análisis de Datos">📊</span>
-                                <span title="Modelo Predictivo">🧠</span>
-                                <span title="Simulación">⚙️</span>
-                            </div>
-                        </div>
-
-                        <div class="md:col-span-3 flex justify-center text-5xl text-cyan-500 mt-8">
-                            <span>⬇️</span>
-                        </div>
-                        
-                        <div class="md:col-span-3 space-y-4">
-                            <h4 class="font-bold text-cyan-400 text-lg">3. Decisiones Inteligentes</h4>
-                            <p class="text-slate-300 max-w-2xl mx-auto">El sistema proporciona información procesable para optimizar la asignación de camas, gestionar el personal de limpieza de forma proactiva y predecir picos de demanda, mejorando drásticamente la eficiencia.</p>
-                             <div class="flex justify-center space-x-4 mt-4 text-4xl">
-                                <span title="Eficiencia">🚀</span>
-                                <span title="Ahorro de Costes">💰</span>
-                                <span title="Mejor Atención">❤️</span>
-                            </div>
-                        </div>
+        <!-- CHALLENGE -->
+        <section id="challenge" class="py-16 bg-slate-50">
+            <div class="max-w-6xl mx-auto px-4">
+                <h2 class="text-3xl font-extrabold text-slate-900 mb-8">El Desafío</h2>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="p-6 bg-white rounded-xl border border-slate-200">
+                        <h4 class="font-bold text-slate-900">Tiempos muertos</h4>
+                        <p class="text-slate-600">Cama libre no detectada → horas perdidas antes de reasignar.</p>
+                    </div>
+                    <div class="p-6 bg-white rounded-xl border border-slate-200">
+                        <h4 class="font-bold text-slate-900">Coordinación manual</h4>
+                        <p class="text-slate-600">Limpieza y enfermería reciben avisos tarde o por canales dispersos.</p>
+                    </div>
+                    <div class="p-6 bg-white rounded-xl border border-slate-200">
+                        <h4 class="font-bold text-slate-900">Visibilidad limitada</h4>
+                        <p class="text-slate-600">Dirección sin KPIs en tiempo real para optimizar el flujo.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="impact" class="py-20 md:py-28">
-            <div class="container mx-auto px-6">
-                <div class="text-center max-w-3xl mx-auto">
-                    <h2 class="text-3xl md:text-4xl font-bold text-slate-800">Impacto Cuantificable: Eficiencia y Rentabilidad</h2>
-                    <p class="mt-4 text-lg text-slate-600">
-                        La implementación del Gemelo Digital no es solo una mejora tecnológica, es una inversión estratégica con un retorno claro y medible. En esta sección, visualizamos los beneficios operativos y financieros proyectados, demostrando el valor tangible que nuestra solución aportará a HM Hospitales.
-                    </p>
+        <!-- SOLUTION -->
+        <section id="solution" class="py-16 bg-white">
+            <div class="max-w-6xl mx-auto px-4">
+                <h2 class="text-3xl font-extrabold text-slate-900 mb-8">La Solución</h2>
+
+                <!-- Chart 1 -->
+                <div class="bg-white rounded-xl border border-slate-200 p-6 mb-8">
+                    <h3 class="font-bold text-slate-900 mb-2">Por qué se van los profesionales (aprox.)</h3>
+                    <div class="h-[300px] chart-container">
+                        <canvas id="emigrationChart"></canvas>
+                    </div>
                 </div>
 
-                <div class="mt-16 grid lg:grid-cols-5 gap-8">
-                    <div class="lg:col-span-3 bg-white p-8 rounded-2xl shadow-lg">
-                        <h3 class="text-xl font-bold text-slate-800 mb-4">Revolución Operativa: Antes y Después</h3>
-                        <p class="text-slate-600 mb-6">Comparamos el tiempo medio dedicado a tareas clave en un sistema tradicional frente al sistema optimizado con IoT y el Gemelo Digital. Los resultados muestran reducciones drásticas, liberando tiempo valioso del personal para centrarse en la atención al paciente.</p>
-                        <div class="chart-container">
-                            <canvas id="efficiencyChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="lg:col-span-2 space-y-8">
-                        <div class="bg-slate-800 text-white p-8 rounded-2xl shadow-lg text-center kpi-card">
-                            <h4 class="text-lg font-semibold text-cyan-400">Retorno de la Inversión (ROI)</h4>
-                            <p id="roiCounter" class="text-7xl font-extrabold text-white mt-2" data-target="229">0%</p>
-                            <p class="text-slate-300 mt-1">Proyectado en base a la optimización de procesos y ahorro de costes.</p>
-                        </div>
-                        <div class="bg-white p-8 rounded-2xl shadow-lg text-center kpi-card">
-                            <h4 class="text-lg font-semibold text-slate-800">Ahorro Potencial</h4>
-                            <p class="text-5xl font-extrabold text-cyan-600 mt-2">€8,300</p>
-                            <p class="text-slate-500 mt-1">Por paciente, con la reducción de 1 día en la estancia media.</p>
-                        </div>
+                <!-- Chart 2 -->
+                <div class="bg-white rounded-xl border border-slate-200 p-6">
+                    <h3 class="font-bold text-slate-900 mb-2">Aceleración del Turn-Around</h3>
+                    <div class="h-[300px] chart-container">
+                        <canvas id="efficiencyChart"></canvas>
                     </div>
                 </div>
             </div>
         </section>
-        
-        <section id="roadmap" class="py-20 md:py-28 bg-white">
-            <div class="container mx-auto px-6">
-                <div class="text-center max-w-3xl mx-auto">
-                    <h2 class="text-3xl md:text-4xl font-bold text-slate-800">Hoja de Ruta para el Éxito</h2>
-                    <p class="mt-4 text-lg text-slate-600">
-                        Proponemos una implementación por fases, diseñada para garantizar una transición fluida, minimizar riesgos y demostrar valor en cada etapa. Este enfoque estructurado asegura la correcta adopción de la tecnología y la consecución de los objetivos marcados.
-                    </p>
-                </div>
 
-                <div class="mt-16 relative">
-                    <div class="hidden md:block absolute top-1/2 left-0 w-full h-1 bg-slate-200 -translate-y-1/2"></div>
-                    <div class="absolute top-1/2 left-0 w-full h-1 bg-cyan-500 -translate-y-1/2" style="width: 0%;" id="roadmap-progress"></div>
-                    
-                    <div class="grid md:grid-cols-3 gap-8 relative">
-                        <div class="roadmap-phase text-center p-6 bg-white rounded-xl border-2 border-transparent">
-                            <div class="flex justify-center items-center w-16 h-16 mx-auto bg-cyan-100 text-cyan-600 rounded-full text-2xl font-bold mb-4">1</div>
-                            <h3 class="text-xl font-bold text-slate-800">Despliegue de Infraestructura</h3>
-                            <p class="mt-2 text-slate-600">Instalación y configuración de la red de sensores IoT y la conectividad Wi-Fi en el hospital piloto para la captura de datos en tiempo real.</p>
-                        </div>
-                        <div class="roadmap-phase text-center p-6 bg-white rounded-xl border-2 border-transparent">
-                            <div class="flex justify-center items-center w-16 h-16 mx-auto bg-cyan-100 text-cyan-600 rounded-full text-2xl font-bold mb-4">2</div>
-                            <h3 class="text-xl font-bold text-slate-800">Implementación del Modelo Predictivo</h3>
-                            <p class="mt-2 text-slate-600">Desarrollo e integración de los algoritmos de IA y Machine Learning para analizar los datos y comenzar a generar predicciones de demanda y ocupación.</p>
-                        </div>
-                        <div class="roadmap-phase text-center p-6 bg-white rounded-xl border-2 border-transparent">
-                            <div class="flex justify-center items-center w-16 h-16 mx-auto bg-cyan-100 text-cyan-600 rounded-full text-2xl font-bold mb-4">3</div>
-                            <h3 class="text-xl font-bold text-slate-800">Integración del Gemelo Digital</h3>
-                            <p class="mt-2 text-slate-600">Puesta en marcha de la plataforma completa del Gemelo Digital, con su interfaz de visualización, monitorización en tiempo real y capacidades de simulación.</p>
-                        </div>
+        <!-- IMPACT -->
+        <section id="impact" class="py-16 bg-slate-50">
+            <div class="max-w-6xl mx-auto px-4">
+                <h2 class="text-3xl font-extrabold text-slate-900 mb-8">Impacto Esperado</h2>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="p-6 bg-white rounded-xl border border-slate-200 text-center">
+                        <div id="roiCounter" data-target="92" class="text-5xl font-extrabold text-cyan-600">0%</div>
+                        <p class="mt-2 text-slate-600">Reducción de tiempos de reasignación</p>
+                    </div>
+                    <div class="p-6 bg-white rounded-xl border border-slate-200 text-center">
+                        <div class="text-5xl font-extrabold text-slate-900">-80%</div>
+                        <p class="mt-2 text-slate-600">Llamadas manuales</p>
+                    </div>
+                    <div class="p-6 bg-white rounded-xl border border-slate-200 text-center">
+                        <div class="text-5xl font-extrabold text-slate-900">+15%</div>
+                        <p class="mt-2 text-slate-600">Ocupación efectiva</p>
                     </div>
                 </div>
+            </div>
+        </section>
+
+        <!-- ROADMAP -->
+        <section id="roadmap" class="py-16 bg-white">
+            <div class="max-w-6xl mx-auto px-4">
+                <h2 class="text-3xl font-extrabold text-slate-900 mb-8">Roadmap</h2>
+                <ol class="relative border-s border-slate-200 ml-4">
+                    <li class="mb-10 ms-6">
+                        <span class="absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full bg-cyan-600 text-white text-xs">1</span>
+                        <h3 class="font-bold text-slate-900">Piloto en planta (22 camas)</h3>
+                        <p class="text-slate-600">Instalación de sensores y flujo básico de avisos.</p>
+                    </li>
+                    <li class="mb-10 ms-6">
+                        <span class="absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full bg-cyan-600 text-white text-xs">2</span>
+                        <h3 class="font-bold text-slate-900">Integraciones</h3>
+                        <p class="text-slate-600">EMR/ADT, limpieza, mantenimiento, telefonía.</p>
+                    </li>
+                    <li class="ms-6">
+                        <span class="absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full bg-cyan-600 text-white text-xs">3</span>
+                        <h3 class="font-bold text-slate-900">Escalado y KPIs</h3>
+                        <p class="text-slate-600">Dashboards, SLAs y alarmas inteligentes.</p>
+                    </li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section id="cta" class="py-16 bg-slate-900 text-white">
+            <div class="max-w-6xl mx-auto px-4 text-center">
+                <h2 class="text-3xl font-extrabold">¿Listos para probarlo en 14 días?</h2>
+                <p class="text-slate-300 mt-2">PoC rápida, sin fricción y con métricas claras de retorno.</p>
+                <a href="#solution" class="inline-block mt-6 px-6 py-3 rounded-xl bg-cyan-600 font-semibold hover:bg-cyan-700">Agendar Demo</a>
             </div>
         </section>
     </main>
 
-    <footer class="bg-slate-800 text-white">
-        <div class="container mx-auto px-6 py-12 text-center">
-            <p class="font-bold text-xl">Vanguard Solutions</p>
-            <p class="mt-2 text-slate-300">Transformando el futuro de la salud, hoy.</p>
-            <p class="mt-6 text-sm text-slate-400">&copy; 2025 Vanguard Solutions. Propuesta para HM Hospitales.</p>
-        </div>
-    </footer>
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-
             const chartColors = {
                 primary: 'rgba(6, 182, 212, 0.8)',
                 primaryLight: 'rgba(6, 182, 212, 0.2)',
@@ -282,6 +211,7 @@
             Chart.defaults.font.family = "'Inter', sans-serif";
             Chart.defaults.color = chartColors.font;
 
+            // --- Emigration chart ---
             const emigrationData = {
                 labels: ['Salarios bajos', 'Carga de trabajo excesiva', 'Inestabilidad laboral', 'Falta de desarrollo', 'Burocracia'],
                 datasets: [{
@@ -305,13 +235,11 @@
                         maintainAspectRatio: false,
                         indexAxis: 'y',
                         plugins: {
-                            legend: {
-                                display: false
-                            },
+                            legend: { display: false },
                             tooltip: {
                                 callbacks: {
                                     label: function(context) {
-                                        return ${context.dataset.label}: ${context.raw}%;
+                                        return `${context.dataset.label}: ${context.raw}%`;
                                     }
                                 }
                             }
@@ -319,38 +247,32 @@
                         scales: {
                             x: {
                                 beginAtZero: true,
-                                grid: {
-                                    drawOnChartArea: false
-                                },
-                                ticks: {
-                                    callback: function(value) {
-                                        return value + '%';
-                                    }
-                                }
+                                grid: { drawOnChartArea: false },
+                                ticks: { callback: (v) => v + '%' }
                             },
-                            y: {
-                                grid: {
-                                    display: false
-                                }
-                            }
+                            y: { grid: { display: false } }
                         }
                     }
                 });
             }
 
+            // --- Efficiency chart ---
             const efficiencyData = {
                 labels: ['Localizar camas disponibles', 'Informar a limpieza', 'Asignar cama a paciente'],
-                datasets: [{
-                    label: 'Sistema Típico (min)',
-                    data: [20, 15, 10],
-                    backgroundColor: chartColors.secondary,
-                    borderRadius: 5,
-                }, {
-                    label: 'Sistema IoT (min)',
-                    data: [1, 1, 2],
-                    backgroundColor: chartColors.primary,
-                    borderRadius: 5,
-                }]
+                datasets: [
+                    {
+                        label: 'Sistema Típico (min)',
+                        data: [20, 15, 10],
+                        backgroundColor: chartColors.secondary,
+                        borderRadius: 5,
+                    },
+                    {
+                        label: 'Sistema IoT (min)',
+                        data: [1, 1, 2],
+                        backgroundColor: chartColors.primary,
+                        borderRadius: 5,
+                    }
+                ]
             };
 
             const efficiencyCtx = document.getElementById('efficiencyChart')?.getContext('2d');
@@ -362,25 +284,17 @@
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
-                            legend: {
-                                position: 'top',
-                            },
+                            legend: { position: 'top' },
                             tooltip: {
                                 callbacks: {
                                     label: function(context) {
-                                        return ${context.dataset.label}: ${context.raw} min;
+                                        return `${context.dataset.label}: ${context.raw} min`;
                                     }
                                 }
                             }
                         },
                         scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Tiempo (minutos)'
-                                }
-                            }
+                            y: { beginAtZero: true, title: { display: true, text: 'Tiempo (minutos)' } }
                         },
                         barPercentage: 0.8,
                         categoryPercentage: 0.7
@@ -388,6 +302,7 @@
                 });
             }
 
+            // --- ROI counter ---
             const roiCounter = document.getElementById('roiCounter');
             const animateCounter = (element) => {
                 const target = +element.getAttribute('data-target');
@@ -397,18 +312,14 @@
 
                 const timer = setInterval(() => {
                     count++;
-                    element.innerText = ${count}%;
+                    element.innerText = `${count}%`;
                     if (count === target) {
                         clearInterval(timer);
                     }
                 }, stepTime);
             };
 
-            const observerOptions = {
-                root: null,
-                threshold: 0.5
-            };
-
+            const observerOptions = { root: null, threshold: 0.5 };
             const observer = new IntersectionObserver((entries, observer) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -429,7 +340,7 @@
 
             const activateNavLink = (id) => {
                 navLinks.forEach(link => {
-                    link.classList.toggle('active', link.getAttribute('href') === #${id});
+                    link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
                 });
             };
 
@@ -444,7 +355,8 @@
             sections.forEach(section => {
                 if(section.id) navObserver.observe(section);
             });
-            
+
+            // Smooth scroll
             navLinks.forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -454,7 +366,6 @@
                     });
                 });
             });
-
         });
     </script>
 </body>
